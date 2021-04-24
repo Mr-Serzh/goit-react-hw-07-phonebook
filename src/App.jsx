@@ -10,7 +10,6 @@ export default function App() {
     <Form>
       <h1>Phonebook</h1>
       <ContactForm />
-      <h2>Contacts</h2>
       <Filter />
       <ContactList />
       <ToastContainer autoClose={2700} />

@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact } from '../../redux/actions';
-import { getContacts } from '../../redux/selectors';
 import Cleave from 'cleave.js/react';
 import { toast } from 'react-toastify';
+import { contactsOperations, contactsSelectors } from '../../redux';
+import LoaderComponent from '../LoaderComponent/LoaderComponent';
 import s from './ContactForm.module.css';
 
 export default function ContactForm() {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(contactsSelectors.getContacts);
+  const isLoading = useSelector(contactsSelectors.getLoading);
+  const error = useSelector(contactsSelectors.getError);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -66,7 +68,7 @@ export default function ContactForm() {
         position: toast.POSITION.TOP_CENTER,
       });
     } else {
-      dispatch(addContact(name, number));
+      dispatch(contactsOperations.addContact(name, number));
     }
     resetInput();
   };
@@ -101,9 +103,13 @@ export default function ContactForm() {
           className={s.input}
         />
       </label>
+      {/* {!isLoading && !error && ( */}
       <button className={s.btn} type="submit">
         Add contact
       </button>
+      {/* )} */}
+      <h2>Contacts</h2>
+      {isLoading && <LoaderComponent />}
     </form>
   );
 }

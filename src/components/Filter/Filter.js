@@ -1,34 +1,46 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { filterContact } from '../../redux/actions';
-import { getFilter, getContacts } from '../../redux/selectors';
-import { CSSTransition } from 'react-transition-group';
-import transition from '../../transitions/transitions.module.css';
+import { motion, AnimatePresence } from 'framer-motion';
+import { contactsActions, contactsSelectors } from '../../redux';
+import { variants } from '../../utils/motionVar';
 import s from './Filter.module.css';
 
 export default function Filter() {
   const dispatch = useDispatch();
-  const filter = useSelector(getFilter);
-  const contacts = useSelector(getContacts);
+  const filter = useSelector(contactsSelectors.getFilter);
+  const contacts = useSelector(contactsSelectors.getContacts);
+  const error = useSelector(contactsSelectors.getError);
 
   return (
-    <CSSTransition
-      in={contacts.length > 1}
-      timeout={250}
-      classNames={transition}
-      mountOnEnter
-      unmountOnExit
-    >
-      <label className={s.label}>
-        Find contacts by name
-        <input
-          className={s.input}
-          type="text"
-          value={filter}
-          onChange={e => dispatch(filterContact(e.target.value))}
-          name="filter"
-          placeholder="input name"
-        />
-      </label>
-    </CSSTransition>
+    <>
+      {contacts.length > 1 && !error && (
+        <AnimatePresence>
+          <motion.label
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition="transition"
+            variants={variants}
+            className={s.label}
+          >
+            Find contacts by name
+            <motion.input
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition="transition"
+              variants={variants}
+              className={s.input}
+              type="text"
+              value={filter}
+              name="filter"
+              placeholder="input name"
+              onChange={e =>
+                dispatch(contactsActions.filterContact(e.target.value))
+              }
+            />
+          </motion.label>
+        </AnimatePresence>
+      )}
+    </>
   );
 }
